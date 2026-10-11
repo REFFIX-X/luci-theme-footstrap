@@ -2,7 +2,7 @@
 
 A REFFIX-maintained Monokai Pro colour edition of the Footstrap-based OpenWrt LuCI theme, tuned to match the REFFIX Firewall Log dashboard.
 
-**Release:** [v2.0.0 for OpenWrt 25.12/APK](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0)
+**Release:** [v2.0.1 for OpenWrt 25.12/APK](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.1)
 
 ## Features
 
@@ -10,6 +10,16 @@ A REFFIX-maintained Monokai Pro colour edition of the Footstrap-based OpenWrt Lu
 - Responsive Footstrap layout and LuCI-wide styling, including third-party LuCI applications.
 - Appearance controls, browser-local preferences and optional router-wide defaults.
 - Designed to pair with [REFFIX Log Viewer](https://github.com/REFFIX-X/luci-app-log).
+
+## Navigation performance
+
+Supported LuCI pages use in-place navigation: the theme keeps the LuCI shell loaded and renders
+the next view without a full page reload. In the repository's 1 August 2026 OpenWrt 25.12.2
+benchmark, this covered 38 stock pages and was 2.29× faster by total median time than stock
+Bootstrap; each transition made 0–7 requests instead of 15–47. Results depend on the router and
+page: views that spend most of their time rendering large datasets have less room to improve.
+See the [benchmark method and per-page results](docs/benchmark.md), and measure again on your own
+router before comparing changes.
 
 ## Compatibility
 
@@ -29,7 +39,7 @@ The installer downloads the release APK, verifies its SHA-256 checksum, and inst
 
 ### Manual APK installation
 
-1. Open the [v2.0.0 release](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0) and download `reffix-luci-theme-footstrap-openwrt-25.12.apk` plus any language APK you need.
+1. Open the [v2.0.1 release](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.1) and download `reffix-luci-theme-footstrap-openwrt-25.12.apk` plus any language APK you need.
 2. Copy the theme APK from Windows PowerShell, in the folder containing the download:
 
    ```powershell

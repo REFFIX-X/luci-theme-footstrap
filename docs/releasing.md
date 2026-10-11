@@ -29,6 +29,8 @@ The GitHub Actions workflow validates the source, builds the APK, installs it on
 
 The release package keeps the established identifier `luci-theme-footstrap` for upgrade compatibility. LuCI presents it as **Monokai Pro** and the About/version link identifies REFFIX.
 
+The publishing workflow is triggered by a commit on `main` whose subject is exactly `release: vX.Y.Z`. It builds and validates the APKs before creating that version's GitHub release. Existing tags are never overwritten, and prior releases remain available.
+
 ## Package contents
 
 - `luci-theme-footstrap`: the theme.

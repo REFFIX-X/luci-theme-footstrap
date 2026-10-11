@@ -1,4 +1,4 @@
-name: REFFIX Monokai Pro v2.0.0
+name: REFFIX Monokai Pro v2.0.1
 
 on:
   push:
@@ -52,7 +52,7 @@ jobs:
 
   build-package:
     name: Build OpenWrt 25.12 APK
-    if: "github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.0'"
+    if: "github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.1'"
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -70,7 +70,7 @@ jobs:
       - name: Build with the OpenWrt SDK
         env:
           BUILD_DIR: ${{ runner.temp }}/reffix-footstrap-build
-          FOOTSTRAP_VERSION: "2.0.0"
+          FOOTSTRAP_VERSION: "2.0.1"
           OPENWRT_RELEASE: "25.12.5"
         run: sh luci-theme-footstrap/build-apk.sh
 
@@ -106,8 +106,8 @@ jobs:
           if-no-files-found: error
 
   publish-release:
-    name: Publish v2.0.0 and clean old releases
-    if: "github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.0'"
+    name: Publish v2.0.1
+    if: "github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.1'"
     needs: [validate, build-package]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -131,15 +131,15 @@ jobs:
           test -s dist/reffix-luci-theme-footstrap-openwrt-25.12.apk
           (cd dist && sha256sum -c SHA256SUMS-openwrt-25.12.txt)
 
-      - name: Publish the single v2.0.0 release
+      - name: Publish v2.0.1
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          TAG="v2.0.0"
+          TAG="v2.0.1"
           cat > "$RUNNER_TEMP/release-notes.md" <<'EOF'
-          # REFFIX Monokai Pro for LuCI v2.0.0
+          # REFFIX Monokai Pro for LuCI v2.0.1
 
           OpenWrt 25.12 APK package built with the official OpenWrt SDK. No custom package feed is required.
 
@@ -153,22 +153,15 @@ jobs:
           Matching REFFIX Log Viewer: https://github.com/REFFIX-X/luci-app-log
           EOF
 
-          # Recreate v2.0.0 only after validation and the SDK package build have passed.
-          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release delete "$TAG" --yes --cleanup-tag --repo "$GITHUB_REPOSITORY"
+          # Never overwrite a release or tag: a version is published once from its main commit.
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
+            || git ls-remote --exit-code origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Refusing to overwrite existing release or tag $TAG." >&2
+            exit 1
           fi
-          gh api --method DELETE "repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG" >/dev/null 2>&1 || true
 
           gh release create "$TAG" dist/* \
             --target "$GITHUB_SHA" \
-            --title "v2.0.0 - REFFIX Monokai Pro for LuCI" \
+            --title "v2.0.1 - REFFIX Monokai Pro for LuCI" \
             --notes-file "$RUNNER_TEMP/release-notes.md" \
             --repo "$GITHUB_REPOSITORY"
-
-          # Keep one release entry. Remove old release entries and their release tags.
-          while IFS= read -r OLD_TAG; do
-            [ -n "$OLD_TAG" ] || continue
-            [ "$OLD_TAG" = "$TAG" ] && continue
-            echo "Removing old release: $OLD_TAG"
-            gh release delete "$OLD_TAG" --yes --cleanup-tag --repo "$GITHUB_REPOSITORY" || true
-          done < <(gh release list --limit 1000 --json tagName --jq '.[].tagName' --repo "$GITHUB_REPOSITORY")

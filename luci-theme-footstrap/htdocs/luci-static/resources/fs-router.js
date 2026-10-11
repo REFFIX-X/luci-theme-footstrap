@@ -917,7 +917,10 @@ function progressEnd() {
 	if (--_progressPending > 0) return;
 	_progressPending = 0;
 	window.clearTimeout(_progressTimer);
-	const bar = progressBar();
+	/* A warm route often finishes before PROGRESS_DELAY. Do not create and insert a bar just to
+	 * discover it was never shown; the first fast navigation should not mutate the document. */
+	const bar = document.getElementById('fs-nav-progress');
+	if (!bar) return;
 	if (bar.dataset.state !== 'active') return;
 	bar.dataset.state = 'done';
 	_progressTimer = window.setTimeout(() => {

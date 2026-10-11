@@ -1,15 +1,19 @@
 ## [Unreleased]
 
+## [2.0.1] — 2026-10-12
+
 
 
 ### Changed
 
+- **The public READMEs now link to the dated 38-page navigation benchmark, and three unreferenced screenshots were removed.** The images were not used by the README, docs, workflows, or package.
 - **Release step 8 describes the feed flow owfeed-packages runs now: wait for the `update/luci-theme-footstrap-<VERSION>` branch's checks, then dispatch `update.yml` by hand instead of waiting on the schedule.** The bot opens no pull request any more, so the "approve the held run" and "dispatch `publish.yml`" bullets are gone, with the note on owfeed-packages#53, closed. The cron is thinned to one run every 2-5 h: on 0.14.14 the branch was green 21 minutes after the release, no later scheduled run came for 5.5 h and the feed kept serving 0.14.13; a manual dispatch landed it in about 1 minute and published in about 3. The served-index check names both indexes: `Packages.gz` for 24.10, `apk adbdump` of `packages.adb` for 25.12.
 - **Agent guardrails close the gaps ten sessions hit.** A commit, push or rebase anywhere in a command — after `;`, inside a script, behind `env`/`timeout`/`xargs` — now asks, and `--no-verify` or a `core.hooksPath` override is refused (295 unit cases); stands take a `flock` so two runs no longer produce false findings (12 in one session); `computed-diff` now sees `user-select`, `pointer-events`, `cursor` and `touch-action`; a broken `fs:probe` export fails `npm test` instead of the package build; a released changelog section edited after its tag fails `npm run changelog`; the upstream PR flow builds from the release tag and runs a read-only `upstream-reviewer` before the first push; `tools/pr-watch.sh` and `tools/rate.sh` replace per-session scratch scripts.
 - **The README is half as long and leads with what the theme does.** One paragraph on scope (24.10+, `luci-base` only, third-party apps, phone, 21 live settings) and the playground link replace the badge row, browser floor and 23.05 note, which live in `docs/`; 127 lines out, 61 in.
 
 ### Fixed
 
+- **Fast SPA navigations no longer create an invisible progress bar.** `progressEnd()` now only looks up the bar that the delayed start actually inserted, avoiding a needless DOM mutation on the first warm route.
 - **The luci-tree sync no longer ships comments that describe stripped exports, `strip-assets.sh`, or pointers to unshipped notes.** `strip-probes.sh` now drops the comment block directly above each `/* fs:probe */` export (3 blocks in `fs-router.js`, 1 in `fs-chrome.js`, 1 in `menu-footstrap-common.js` were left attached to nothing), `sync-luci-fork.sh` excludes `strip-assets.sh` like the other build scripts, and the three `fs-assets.js` sanitizer comments carry their own one-line reason instead of only naming `docs/architecture.md`. The sync also takes each file's mode from the theme repo's index, not the worktree (`core.fileMode=false` let the CGI lose `+x`, a `100755` → `100644` change in the PR), no longer leaves a double blank line where a probe block was removed, and fails when a mode differs from the index or a stripped JS has more double-blank runs than its source. The sync also fails when a shipped file names `../tmp/`, a `tests/` or `tools/` file, an `owrt*` stand, a theme-repo `issue #N` or a commit hash (56 such references in the PR, now 0; the 56 `docs/*.md` pointers are only counted), and the shipped comments state those reasons inline instead. Also: `fs-fit.js` drops its unused `'require ui'`, its four trail accessors are `/* fs:probe */` exports, `menu-footstrap-common.js` names `RECENT_KEY`/`RECENT_MAX` once, and the `fs-router.js` export list no longer ends on a stripped entry (a dangling comma).
 
 - **The login-background comment in `uci-defaults/30_luci-theme-footstrap` names what actually keeps a direct open inert: the extension-less name uhttpd serves as `application/octet-stream`, not `fs-assets.js`'s canvas re-encode.** The ACL authorises the cgi-upload POST whatever wrote it, so the re-encode is compression and EXIF removal, not a boundary; the stale-symlink cleanup is dated pre-0.14.11, the release the pattern's cgi handler first shipped in. Two stand traps join `docs/development.md`: a file `docker cp`'d from `/mnt/c` keeps uid 1000 and still answers 403 after `chmod` (`chown 0:0`), and Git Bash rewrites the path so `docker cp` exits 9 (`MSYS_NO_PATHCONV=1`). `fs-chrome.js` and `fs-router.js` drop four `../tmp/task-*` paths from comments.
@@ -4749,3 +4753,4 @@ line, not one per tag. The individual patch releases are in the git history.
 [0.2.x]: https://github.com/VizzleTF/luci-theme-footstrap/compare/v0.1.1...v0.2.4
 [0.1.x]: https://github.com/VizzleTF/luci-theme-footstrap/commits/v0.1.1
 [2.0.0]: https://github.com/REFFIX-X/luci-theme-footstrap/compare/v0.14.14...v2.0.0
+[2.0.1]: https://github.com/REFFIX-X/luci-theme-footstrap/compare/v2.0.0...v2.0.1
