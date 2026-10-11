@@ -77,7 +77,7 @@ notes and the asset choice are evaluated at tag time, in the field, months later
 
 ```sh
 # on a dev router, RELJSON = the release JSON of the intended shape
-for EXT in apk ipk; do
+for EXT in apk; do
   n=$(jsonfilter -i "$RELJSON" -e '@.assets[*].browser_download_url' \
       | grep -Ec "/luci-theme-footstrap[-_][^/]*\.$EXT\$")
   echo "$EXT -> n=$n (must be 0 or 1)"
@@ -86,8 +86,7 @@ done
 
 ## Step 4 — live checks for the areas the diff touched
 
-Run on both releases (25.12/apk and 24.10/opkg). Compare against stock bootstrap
-wherever you are unsure — it is the reference for LuCI behaviour.
+Run on OpenWrt 25.12/APK. Compare against stock bootstrap wherever you are unsure — it is the reference for LuCI behaviour.
 
 **A release runs the WIDE version of the automatic live gates first:**
 
@@ -105,17 +104,14 @@ node tools/scroll-anchor.mjs --all
 node tools/upstream-contract.mjs --all         # what the theme assumes of luci-base, asked on each
 ```
 
-**And the package on both formats, before the tag.** `npm run live` measures a *synced* tree; a
-release is *installed*, and that is a different claim — two `owlab test` invocations, one per
-format, never one run with two `--release` flags (`--install` is a host-side glob evaluated per
-router, so `dist/*/…` hands the apk box an ipk too: `0 of 2 routers passed`). The five assertions
-and the exact flags are in [development.md](development.md#proving-it-on-a-router-owlab-test); the
-fifth is the `ucode -T -c` sweep over every installed template.
+**And the package, before the tag.** `npm run live` measures a *synced* tree; a release is
+*installed*, and that is a different claim. The release is APK-only and the five assertions plus
+exact flags are in [development.md](development.md#proving-it-on-a-router-owlab-test); the fifth is
+the `ucode -T -c` sweep over every installed template.
 
 ```sh
 ./tools/stage.sh && owfeed build
 owlab test --release 25.12.4 --install 'dist/noarch/luci-theme-footstrap-*.apk' --assert …
-owlab test --release 24.10.8 --install 'dist/all/luci-theme-footstrap_*.ipk'   --assert …
 ```
 
 Both of these are long runs: start them detached with `tools/bg.sh` and read the logs out of
@@ -258,7 +254,7 @@ Only after everything above has passed:
    upstream condition, and nobody looked before the tag went out.
 6. Push the commit and the tag to `origin` — the only remote (the `git.vaka.work` mirror was removed
    on 2026-07-25).
-7. CI on `v*` builds both formats, signs them, and builds the release body from the changelog, but
+7. CI on `v*` builds OpenWrt 25.12 APK packages, signs them, and builds the release body from the changelog, but
    `release` does not run until whatever it gates on is green, by design — deliberately, so that a
    tag cannot publish a package no router has installed. The consequence is exactly what bit
    `v0.14.12`: any one red leg holds the whole release, including a leg red for a reason that has
@@ -282,7 +278,7 @@ Only after everything above has passed:
    ~3 min to publish).
 
    Then read the **served** index rather than the workflow log: `Packages.gz` on
-   `https://repo.owfeed.org/releases/24.10/<arch>/` (`Version:` after `Package: luci-theme-footstrap`),
+   `https://repo.owfeed.org/releases/25.12/<arch>/` (`Version:` after `Package: luci-theme-footstrap`),
    `apk adbdump` on `releases/25.12/<arch>/packages.adb` from a router or stand (the file is
    compressed, `strings` finds nothing). Confirm the new version is there.
 
