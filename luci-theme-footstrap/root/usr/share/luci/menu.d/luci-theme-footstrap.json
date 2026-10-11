@@ -1,6 +1,6 @@
 {
 	"admin/system/footstrap": {
-		"title": "Footstrap",
+		"title": "Monokai Pro",
 		"order": 3,
 		"action": {
 			"type": "view",
