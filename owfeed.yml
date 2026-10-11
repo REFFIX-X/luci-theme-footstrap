@@ -1,11 +1,10 @@
 # How the released packages are built — see https://github.com/owfeed/owfeed
 #
 #   ./tools/stage.sh     # produce dist/root, the tree owfeed packages
-#   owfeed build         # dist/noarch/*.apk (25.12) + dist/all/*.ipk (24.10)
+#   owfeed build         # dist/noarch/*.apk (OpenWrt 25.12 only)
 #
 # Why this replaced the SDK: the theme is noarch — CSS, templates and browser JS, not one compiled
-# byte — and the SDK build spent ~5 minutes per format downloading and verifying a cross toolchain to
-# run `cp`, twice, because 24.10's opkg and 25.12's apk are different containers. What the SDK
+# byte — and the package needs only OpenWrt 25.12's APK container. What the SDK
 # contributed was three things owfeed also does: the .lmo catalogues (byte-identical to po2lmo), the
 # conffiles/scripts sidecars package-pack.mk emits, and the default_postinst wrapper that makes
 # /etc/uci-defaults/* run at all.
@@ -33,25 +32,17 @@ feed:
   license: Apache-2.0
   homepage: https://github.com/REFFIX-X/luci-theme-footstrap
 
-# Both lines, from one staged tree. 25.12+ is apk, 24.10 is opkg, and the difference is not only the
-# container: opkg calls an architecture-independent package `all` where apk requires `noarch` and
-# rejects `all`. owfeed emits each under the name its manager understands.
+# This project intentionally publishes OpenWrt 25.12+ APK packages only.
 releases:
   - line: "25.12"
     default: true
     format: apk
-  - line: "24.10"
-    format: ipk
 
-# NO `signing:` BLOCK, and its absence is the point. Those keys sign a feed's INDEX — usign for opkg,
-# EC for apk — and this repository never builds one: it publishes release assets, and the feed that
+# NO `signing:` BLOCK, and its absence is the point. Those keys sign a feed's INDEX, and this
+# repository never builds one: it publishes release assets, and the feed that
 # carries them signs its index with its own key at the far end. What vouches for our bytes is
 # `owfeed release`, whose usign signatures over the packages and the manifest are made in the release
 # job, where the secret is reachable and the build job cannot see it.
-#
-# Declaring it here does not work: up to 0.11.6 it named two environment variables nothing read,
-# because owfeed <= v0.1.2 demanded an index key at config-load time for any ipk line. Fixed in
-# v0.1.3, where the requirement moved to `owfeed index`.
 #
 # If a feed is ever published from here: FOOTSTRAP_USIGN_KEY is the BASE64 of usign's two-line
 # secret-key file (one canonical form, so a copy-paste cannot mangle the newlines) and owfeed wants
@@ -98,12 +89,7 @@ packages:
     # Extracted from the Makefile's own defines by tools/stage.sh, so the SDK path and this one
     # cannot disagree about what happens at install time. owfeed adds the default_postinst /
     # default_prerm wrapper around them, exactly as package-pack.mk does.
-    #
-    # For the 24.10 leg: owfeed's ipk container emits postinst and prerm only, so post-deinstall
-    # reaches apk but not opkg today. On 24.10 that loses the removal cleanup (unregistering the
-    # theme, putting mediaurlbase back) — a real removal only, never an upgrade, which the script's
-    # own `case "$1" in *upgrade*` guard already exits on.
-    scripts:
+        scripts:
       post-install: ./dist/scripts/post-install
       post-deinstall: ./dist/scripts/post-deinstall
 
@@ -148,10 +134,7 @@ packages:
     # both are true. The pin re-fires the rule on every upgrade of the theme; `luci-i18n-base-ru`
     # is what "this router is Russian" looks like to a package manager, which cannot read
     # `uci luci.main.lang`.
-    #
-    # opkg has no conditional form of this — `Recommends:` is executed but unconditional, and would
-    # put Russian on every 24.10 router — so that leg is covered by install.sh instead.
-    install-if: [ "luci-theme-footstrap={version}", "luci-i18n-base-ru" ]
+        install-if: [ "luci-theme-footstrap={version}", "luci-i18n-base-ru" ]
 
   - name: luci-i18n-footstrap-es
     build: mkpkg
