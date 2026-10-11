@@ -39,3 +39,8 @@ The generated stylesheet is built from `luci-theme-footstrap/styles/`; do not ed
 ## Licensing
 
 This project is a REFFIX colour and branding adaptation of Footstrap. Preserve the upstream attribution and license notices in source and release artifacts.
+
+
+## Changelog mirror
+
+`CHANGELOG.md` is required. `CHANGELOG_ru.md` is optional: leave it empty when no Russian mirror is maintained. If it contains content, the version list, dates, section order and bullet counts must match the English changelog, and the current release notes must have a Russian section. The release-note generator appends the Russian summary only when that mirror is non-empty.
