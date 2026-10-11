@@ -338,7 +338,7 @@ function build() {
 		}, bump(repaint(prefs.applyMode)), label)),
 
 		group(_('Palette', 'footstrap'), (label) => selectCtl(axes.palette.current(), {
-			footstrap:  'Footstrap',
+			footstrap:  'Monokai Pro',
 			hicontrast: 'Hi-Contrast',
 			/* names the OTHER package, luci-theme-bootstrap, whose colours this palette is —
 			 * so it is a proper noun and stays untranslated, like the two above it */
