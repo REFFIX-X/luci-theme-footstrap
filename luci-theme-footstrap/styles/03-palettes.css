@@ -95,26 +95,25 @@
 	}
 	:root[data-darkmode="true"],
 	:root[data-palette="footstrap"][data-darkmode="true"] {
-		/* DARK (dimmed) */
-		--fs-bg-base: #1c2128;
-		--fs-panel-base: #22272e;
-		--fs-panel2-base: #2d333b;
-		--fs-border-base: #444c56;
-		--fs-text: #adbac7;
-		--fs-dim: #8f9cab;
-		--fs-faint: #959ca5;
-		--fs-accent-base: #569df5;
+		/* REFFIX Monokai Pro dark palette */
+		--fs-bg-base: #2D2A2E;
+		--fs-panel-base: #221F22;
+		--fs-panel2-base: #343136;
+		--fs-border-base: #514D52;
+		--fs-text: #FCFCFA;
+		--fs-dim: #C7C3C8;
+		--fs-faint: #B0AAB2;
+		--fs-accent-base: #78DCE8;
 		--fs-accent-soft: color-mix(in srgb, var(--fs-accent) 15%, transparent);
-		--fs-track: #373e47;
-		--fs-good-base: #5aad5d;
-		--fs-warn-base: #c79128;
-		--fs-danger-base: #ea7a74;
-		/* dark ink: fills are light; white fails all four (2.79 worst), #10151c (a shade of
-		 * --fs-bg) clears them (6.55 worst) */
-		--fs-on-accent: #10151c;
-		--fs-on-good: #10151c;
-		--fs-on-warn: #10151c;
-		--fs-on-danger: #10151c;
+		--fs-track: #413C43;
+		--fs-good-base: #A9DC76;
+		--fs-warn-base: #FFD866;
+		--fs-danger-base: #FF6188;
+		/* Dark ink on bright status and accent fills keeps labels legible. */
+		--fs-on-accent: #2D2A2E;
+		--fs-on-good: #2D2A2E;
+		--fs-on-warn: #2D2A2E;
+		--fs-on-danger: #2D2A2E;
 	}
 
 	/* ---- hicontrast — deeper, more saturated (opt-in); docs/design-system.md "Palettes" ---- */
