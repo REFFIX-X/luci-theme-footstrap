@@ -10,19 +10,17 @@
 set -eu
 
 # NOT `. "$GITHUB_ENV"` after this — that file is a KEY=VALUE list, not a script, so a value with a
-# space in it ("owrt2512 owrt2410") would run its second word as a command.
+# space in it ("owrt2512 owrtsnap") would run its second word as a command.
 #
-# The three OpenWrt lines the theme supports: both package managers plus the snapshot box, which
-# tracks luci-base master and so fails on an upstream change before a user reports it. ImmortalWrt
-# is deliberately absent — same luci-base, different brand, never the leg that caught something
-# first; run it locally with --all when curious.
-if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then ROUTERS="owrt2512"; else ROUTERS="owrt2512 owrt2410 owrtsnap"; fi
+# The published package targets OpenWrt 25.12/APK. Snapshot remains a compatibility smoke test
+# against current luci-base; the 24.10/opkg router is intentionally not built or installed.
+if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then ROUTERS="owrt2512"; else ROUTERS="owrt2512 owrtsnap"; fi
 echo "ROUTERS=$ROUTERS" >> "$GITHUB_ENV"
 
 owlab up $ROUTERS
 for r in $ROUTERS; do
 	case "$r" in
 		*2512|*snap) owlab install "$r" dist/noarch/luci-theme-footstrap-*.apk ;;
-		*)           owlab install "$r" dist/all/luci-theme-footstrap_*.ipk ;;
+		*) echo "Unsupported test router for the APK-only release: $r" >&2; exit 1 ;;
 	esac
 done
