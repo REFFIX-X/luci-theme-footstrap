@@ -21,7 +21,7 @@
 version: 1
 
 feed:
-  name: reffix
+  name: footstrap
   # This repository publishes RELEASE ASSETS, not a feed of its own: an installed key is a trust
   # anchor for every package name, which is more authority than one theme should ask for. The feed
   # that carries this package is owfeed-packages, which pins our released .apk by sha256 and adds its
