@@ -4,6 +4,8 @@ A REFFIX-maintained Monokai Pro colour edition of the Footstrap-based OpenWrt Lu
 
 **Current release:** [v2.0.0 for OpenWrt 25.12/APK](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0).
 
+The v2.0.0 release is built by the repository's gated GitHub Actions pipeline; the release page contains the generated APK package(s) and SHA-256 checksums.
+
 ## Features
 
 - Monokai Pro dark surfaces and matching cyan, purple, pink, orange, green and yellow accents.
