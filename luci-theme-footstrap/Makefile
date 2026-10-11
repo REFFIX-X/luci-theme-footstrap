@@ -15,7 +15,7 @@ LUCI_NAME:=luci-theme-footstrap
 # Version is git-derived; never hardcode PKG_VERSION. luci.mk falls back to PKG_SRC_VERSION,
 # which it always defines, when nothing here sets it — see docs/package.md for why no override
 # lives here.
-LUCI_TITLE:=Footstrap Theme
+LUCI_TITLE:=REFFIX Monokai Pro Theme
 # +luci-base is the WHOLE list, and keeping it that way is the constraint. Nothing this package ships
 # fetches anything at run time, so there is no second name to justify — and the rule that got it here
 # stands: the one convenience tool that ever wanted a dep was `curl`, which is NOT in OpenWrt's
@@ -25,8 +25,8 @@ LUCI_DEPENDS:=+luci-base
 LUCI_PKGARCH:=all
 # Else luci.mk defaults these to LuCI's own, and the package claims MAINTAINER "OpenWrt LuCI
 # community" / URL openwrt/luci.
-LUCI_MAINTAINER:=Ivan Kvashonkin <vizzlef@gmail.com>
-LUCI_URL:=https://github.com/VizzleTF/luci-theme-footstrap
+LUCI_MAINTAINER:=REFFIX
+LUCI_URL:=https://github.com/REFFIX-X/luci-theme-footstrap
 
 # CSS: ship verbatim. luci.mk would run csstidy over it, which is old enough to mangle :has(),
 # color-mix() and nested calc() and break the layout. build-css.sh minifies instead.
