@@ -156,7 +156,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: owfeed-packages
-          path: dist/noarch/noarch
+          path: dist/noarch
           if-no-files-found: error
 
   # Everything above proves the package was BUILT correctly. None of it proves what a user cares
