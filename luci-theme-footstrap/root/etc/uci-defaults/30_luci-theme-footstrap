@@ -13,7 +13,12 @@ set_opt() {
 	changed=1
 }
 
-set_opt themes.Footstrap /luci-static/footstrap
+# Migrate the old dropdown label; keep the underlying media path and settings intact.
+if uci -q get luci.themes.Footstrap >/dev/null 2>&1; then
+	uci -q delete luci.themes.Footstrap
+	changed=1
+fi
+set_opt themes.MonokaiPro /luci-static/footstrap
 
 # A fresh install may pick the theme; an upgrade must never move a router off the theme it is on.
 # `changed` is what tells the two apart — on an upgrade the entry is already there — and it has to
