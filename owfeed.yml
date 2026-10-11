@@ -21,17 +21,17 @@
 version: 1
 
 feed:
-  name: footstrap
+  name: reffix
   # This repository publishes RELEASE ASSETS, not a feed of its own: an installed key is a trust
   # anchor for every package name, which is more authority than one theme should ask for. The feed
   # that carries this package is owfeed-packages, which pins our released .apk by sha256 and adds its
   # own signature — so this URL is where a subscriber's apk really fetches it from, and `build` is
   # the only stage this file drives.
   url: https://repo.owfeed.org
-  title: Footstrap
-  maintainer: "Ivan Kvashonkin <vizzlef@gmail.com>"
+  title: REFFIX Monokai Pro
+  maintainer: "REFFIX"
   license: Apache-2.0
-  homepage: https://github.com/VizzleTF/luci-theme-footstrap
+  homepage: https://github.com/REFFIX-X/luci-theme-footstrap
 
 # Both lines, from one staged tree. 25.12+ is apk, 24.10 is opkg, and the difference is not only the
 # container: opkg calls an architecture-independent package `all` where apk requires `noarch` and
@@ -75,15 +75,15 @@ packages:
     version-from: file:./dist/VERSION
     files: ./dist/root
 
-    description: "A modern, fast LuCI theme."
+    description: "REFFIX Monokai Pro colour edition for LuCI."
     # +luci-base is the WHOLE list, and it is the Makefile's LUCI_DEPENDS verbatim. Nothing may pull
     # curl onto an 8 MB device for one fetch — uclient-fetch is already in the base image.
     depends: [luci-base]
     # Apache-2.0 alone, as the Makefile's PKG_LICENSE says. No OFL-1.1: the theme ships no Font
     # Software, so declaring it would be false.
     license: Apache-2.0
-    url: https://github.com/VizzleTF/luci-theme-footstrap
-    maintainer: "Ivan Kvashonkin <vizzlef@gmail.com>"
+    url: https://github.com/REFFIX-X/luci-theme-footstrap
+    maintainer: "REFFIX"
     # Which commit produced these bytes, recorded in the package itself. env: because the value
     # changes with every commit and belongs in CI, not in a committed file.
     repo-commit: env:GITHUB_SHA
