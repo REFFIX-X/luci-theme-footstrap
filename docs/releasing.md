@@ -71,8 +71,7 @@ notes and the asset choice are evaluated at tag time, in the field, months later
 - **The reader in the field** is `install.sh`, and it never guesses: on a router the feed cannot
   serve it reads the signed `manifest.txt` and matches `$2` against the package name exactly, which
   is what makes a release carrying `luci-theme-footstrap` and two `luci-i18n-footstrap-<lang>`
-  packages safe where #6 was not. The release must still resolve to one file per format **per
-  name**, for a by-hand install and for the Pages mirror. Simulate it against the shape of the
+  packages safe where #6 was not. The release must still resolve to one APK per package name, for a by-hand install and for the Pages mirror. Simulate it against the shape of the
   coming release:
 
 ```sh
@@ -263,7 +262,7 @@ Only after everything above has passed:
    view <id>` for the job list, `gh run view --job <id> --log-failed` for the failing step's log; say
    plainly whether the cause is this diff, an infrastructure condition, or an upstream feed. Only
    then check the release carries the expected assets (plus a `.sig` for each): the theme resolving
-   to exactly one asset per format, the manifest, the installer, the notes.
+   to exactly one APK per package name, the manifest, the installer, the notes.
 8. **Publish the feed, and do not wait on the schedule.** The theme is installed from
    owfeed-packages, so a release nobody can `apk upgrade` into is half a release. There `update.yml`
    runs `land` → `check` → `publish` on a cron GitHub thins to one run every 2-5 h. `check` pushes
