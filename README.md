@@ -2,59 +2,50 @@
 
 A REFFIX-maintained Monokai Pro colour edition of the Footstrap-based OpenWrt LuCI theme, tuned to match the REFFIX Firewall Log dashboard.
 
-**Current release:** [v2.0.0 for OpenWrt 25.12/APK](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0).
-
-The v2.0.0 release is built by the repository's gated GitHub Actions pipeline; the release page contains the generated APK package(s) and SHA-256 checksums.
+**Release:** [v2.0.0 for OpenWrt 25.12/APK](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0)
 
 ## Features
 
-- Monokai Pro dark surfaces and matching cyan, purple, pink, orange, green and yellow accents.
+- Monokai Pro dark surfaces with cyan, purple, pink, orange, green and yellow accents.
 - Responsive Footstrap layout and LuCI-wide styling, including third-party LuCI applications.
 - Appearance controls, browser-local preferences and optional router-wide defaults.
-- Designed to pair visually with [REFFIX Log Viewer](https://github.com/REFFIX-X/luci-app-log).
+- Designed to pair with [REFFIX Log Viewer](https://github.com/REFFIX-X/luci-app-log).
 
 ## Compatibility
 
-Built and tested for OpenWrt 25.12+ using APK packages only. IPK/opkg builds are not published. Browser support follows the underlying Footstrap implementation.
+This release targets **OpenWrt 25.12 using APK**. The workflow builds the package with the official OpenWrt SDK. IPK/opkg packages are not published in this release.
 
 ## Installation
 
-### Option 1: Install the v2.0 APK release
+### Install from the v2.0.0 release
 
-1. Open [**REFFIX Monokai Pro v2.0 Releases**](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0).
-2. Download the theme package named `luci-theme-footstrap-*.apk` and the language package you want, `luci-i18n-footstrap-<lang>-*.apk`, if provided.
-3. Copy the APK files to your OpenWrt 25.12 router. For example, from Windows PowerShell:
+1. Open [**REFFIX Monokai Pro v2.0.0 Releases**](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0).
+2. Download `reffix-luci-theme-footstrap-openwrt-25.12.apk` and, if you need a translation, the matching language package.
+3. Copy the downloaded APK to your router. From Windows PowerShell, in the folder containing the downloaded file:
 
    ```powershell
-   Get-ChildItem .\luci-theme-footstrap-*.apk | ForEach-Object {
-       scp $_.FullName root@192.168.1.1:/tmp/
-   }
+   scp .\reffix-luci-theme-footstrap-openwrt-25.12.apk root@192.168.1.1:/tmp/
    ```
 
-4. SSH into the router and install the downloaded APK package(s):
+4. SSH into the router and install the package:
 
    ```sh
-   apk add --allow-untrusted /tmp/luci-theme-footstrap-*.apk
+   apk add --allow-untrusted /tmp/reffix-luci-theme-footstrap-openwrt-25.12.apk
    ```
 
-   If you downloaded a translation package, install that too using its exact filename. Use only APK packages built for OpenWrt 25.12+; this project does not publish IPK/opkg packages.
+   Install any downloaded language package the same way, using its exact filename.
 
-5. In LuCI, open **System → System → Language and Style**, then choose **Monokai Pro** under Design. If the previous stylesheet is still cached, hard-refresh LuCI with **Ctrl+F5**.
+5. In LuCI, open **System → System → Language and Style** and choose **Monokai Pro** under **Design**. If the old styles remain visible, hard-refresh the page with **Ctrl+F5**.
 
-### Option 2: Install from a configured package feed
+### Verify the download
 
-If the v2.0 package feed is configured on your router, run:
+The release includes `SHA256SUMS-openwrt-25.12.txt`. From a Linux shell, verify the APK with:
 
 ```sh
-apk update
-apk add luci-theme-footstrap
+sha256sum -c SHA256SUMS-openwrt-25.12.txt
 ```
 
-Then select **Monokai Pro** under **System → System → Language and Style**.
-
-**Upgrade note:** the installed package identifier remains `luci-theme-footstrap` to preserve compatibility with existing installations.
-
-The package source is in [`luci-theme-footstrap/`](luci-theme-footstrap/). The generated CSS is built from the source files in `luci-theme-footstrap/styles/`.
+**Upgrade note:** the package identifier remains `luci-theme-footstrap`, preserving the package identity for upgrades.
 
 ## Palette
 
@@ -74,4 +65,4 @@ The package source is in [`luci-theme-footstrap/`](luci-theme-footstrap/). The g
 
 ## Credits and licensing
 
-This is a colour and branding adaptation of [VizzleTF/luci-theme-footstrap](https://github.com/VizzleTF/luci-theme-footstrap). The upstream code and license notices are retained. Licensed under Apache-2.0 where stated by the source project.
+This is a colour and branding adaptation of [VizzleTF/luci-theme-footstrap](https://github.com/VizzleTF/luci-theme-footstrap). Upstream code and license notices are retained. Licensed under Apache-2.0 where stated by the source project.
