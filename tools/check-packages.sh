@@ -1,33 +1,7 @@
 #!/bin/sh
-# What `owfeed build` left in dist/, checked against what a release has to contain.
-#
-# The catalogues: a .lmo is a build artefact, not a file in git, and a silently missing one makes
-# every _() render its English msgid with nothing complaining. Each language ships as its own
-# `luci-i18n-footstrap-<lang>`, the way luci.mk emits them, so the assertion is one catalogue per
-# language package and NONE in the theme — two packages owning one path is an install apk refuses.
-#
-# Read out of the ipk, that container being a plain tar. The apk is not a tar at all — apk-tools 3
-# packages the payload as one ADB (Alpine/OpenWrt "atom data blob") container, raw-deflate compressed
-# behind an "ADBd" prefix — so a byte-for-byte parity claim between the two legs needs its own reader
-# rather than "one is enough" for a format tar cannot open. apk_list() below is that reader: it
-# decompresses the ADBd stream, walks the block list for the control (ADB_BLOCK_ADB) block, and reads
-# the package/paths/files tree the same way `apk` itself would to answer "what does this ship" — the
-# schema (package field indices, the count-prefixed slot array both objects and arrays use on disk)
-# comes from apk-tools' own src/adb.h and src/apk_adb.h, and every field read here was checked
-# against a real `apk mkpkg` output before being trusted (a 39-path theme .apk and a 3-path
-# luci-i18n-footstrap-ru .apk, both decoding to exactly the files staged into them).
-#
-# THREE ZERO-BYTE .apk FILES USED TO PASS THIS WHOLE GATE, because the apk leg never opened one — it
-# matched a filename pattern and stopped. apk_list() below fails loudly on anything that is not a
-# real ADB package (wrong size, wrong magic, undecodable stream, no control block), which is what
-# turns "the file exists" into "the file is what CI thinks it packed".
-#
-# Exactly one theme package per format, BY NAME. Load-bearing: anything resolving the theme by a
-# loose pattern and taking head -1 mis-picks a stray asset that matches it — a per-language
-# luci-i18n package did that and was installed AS the theme, reporting success (issue #6). The
-# language packages are back, so the name test matters more than it did, not less: install.sh reads
-# the signed manifest and matches `$2 == "luci-theme-footstrap"` exactly, and this is what keeps a
-# second package from answering to that name.
+# Validate the actual package payloads produced by owfeed.
+# This repository publishes OpenWrt 25.12+ APK packages only; IPKs are a hard failure.
+# Each language is a separate luci-i18n-footstrap package and must own exactly one .lmo file.
 set -eu
 cd "$(dirname "$0")/.."
 
