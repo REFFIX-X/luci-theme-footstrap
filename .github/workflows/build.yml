@@ -428,7 +428,7 @@ jobs:
     name: Record and verify the playground
     timeout-minutes: 20
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.0')
+    if: "startsWith(github.ref, 'refs/tags/v') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.0')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -476,7 +476,7 @@ jobs:
 
   publish-v2:
     name: Publish REFFIX Monokai Pro v2.0.0
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.0'
+    if: "github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.0'"
     needs: [build, verify, live, anchors, lint, playground]
     runs-on: ubuntu-latest
     timeout-minutes: 10
