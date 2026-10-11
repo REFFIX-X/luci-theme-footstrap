@@ -117,11 +117,11 @@ packages:
     arch: noarch
     version-from: file:./dist/VERSION
     files: ./dist/i18n-ru
-    description: "Footstrap theme - Russian translation"
+    description: "REFFIX Monokai Pro - Russian translation"
     depends: [luci-theme-footstrap]
     license: Apache-2.0
-    url: https://github.com/VizzleTF/luci-theme-footstrap
-    maintainer: "Ivan Kvashonkin <vizzlef@gmail.com>"
+    url: https://github.com/REFFIX-X/luci-theme-footstrap
+    maintainer: "REFFIX"
     i18n:
       from: ./dist/po-ru
       basename: footstrap
@@ -140,11 +140,11 @@ packages:
     arch: noarch
     version-from: file:./dist/VERSION
     files: ./dist/i18n-es
-    description: "Footstrap theme - Spanish translation"
+    description: "REFFIX Monokai Pro - Spanish translation"
     depends: [luci-theme-footstrap]
     license: Apache-2.0
-    url: https://github.com/VizzleTF/luci-theme-footstrap
-    maintainer: "Ivan Kvashonkin <vizzlef@gmail.com>"
+    url: https://github.com/REFFIX-X/luci-theme-footstrap
+    maintainer: "REFFIX"
     i18n:
       from: ./dist/po-es
       basename: footstrap
