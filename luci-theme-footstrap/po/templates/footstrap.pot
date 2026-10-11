@@ -157,7 +157,7 @@ msgid "File"
 msgstr ""
 
 #: root/usr/share/luci/menu.d/luci-theme-footstrap.json:3
-msgid "Footstrap"
+msgid "Monokai Pro"
 msgstr ""
 
 #: htdocs/luci-static/resources/fs-appearance.js:823
