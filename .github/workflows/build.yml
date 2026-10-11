@@ -346,7 +346,7 @@ jobs:
   # Why the other engines at all: the fault this gate hunts lives on the path an engine takes when it
   # DOES anchor. WebKit shipped anchoring, so chromium-with-anchoring-suppressed no longer stands in
   # for Safari, and on that path WebKit overshoots a section swap by 60px per tick. Measured on
-  # 24.10, both layouts, 390 and 1440.
+  # Both layouts, 390 and 1440 on the supported APK release line.
   anchors:
     # ONE JOB PER ENGINE, and it is the release's critical path that pays for it: this gate ran
     # 52 minutes against live's 17 on the same three routers, so the whole pipeline was as slow as
