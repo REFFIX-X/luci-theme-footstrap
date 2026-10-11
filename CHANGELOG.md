@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [2.0.0] — 2026-10-11
+
+### Added
+
+- **REFFIX Monokai Pro v2.0.0 is released for OpenWrt 25.12+ using APK only.** The theme has its own release page, manual install instructions and package checksums.
+
+### Changed
+
+- **The theme branding and palette now match REFFIX Log Viewer.** The existing `luci-theme-footstrap` package name is retained for upgrade compatibility.
+
+
 ### Changed
 
 - **Release step 8 describes the feed flow owfeed-packages runs now: wait for the `update/luci-theme-footstrap-<VERSION>` branch's checks, then dispatch `update.yml` by hand instead of waiting on the schedule.** The bot opens no pull request any more, so the "approve the held run" and "dispatch `publish.yml`" bullets are gone, with the note on owfeed-packages#53, closed. The cron is thinned to one run every 2-5 h: on 0.14.14 the branch was green 21 minutes after the release, no later scheduled run came for 5.5 h and the feed kept serving 0.14.13; a manual dispatch landed it in about 1 minute and published in about 3. The served-index check names both indexes: `Packages.gz` for 24.10, `apk adbdump` of `packages.adb` for 25.12.
