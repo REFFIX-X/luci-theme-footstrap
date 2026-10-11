@@ -79,11 +79,11 @@ if [ -z "$summary" ]; then
 	exit 1
 fi
 
-# The RU mirror must carry the section too. A mirror that lags is worse than none: the release
+# If configured, the RU mirror must carry the section too. A mirror that lags is worse than none: the release
 # page would show the English half only and nobody could tell which file was stale. Both are
 # edited in the same commit.
 summary_ru=""
-if [ -f "$changelog_ru" ]; then
+if [ -s "$changelog_ru" ]; then
 	summary_ru="$(extract "$changelog_ru")"
 	if [ -z "$summary_ru" ]; then
 		echo "error: no '## [$ver]' section in $changelog_ru (the EN file has one)." >&2
