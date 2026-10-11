@@ -88,7 +88,7 @@ packages:
     # Extracted from the Makefile's own defines by tools/stage.sh, so the SDK path and this one
     # cannot disagree about what happens at install time. owfeed adds the default_postinst /
     # default_prerm wrapper around them, exactly as package-pack.mk does.
-        scripts:
+    scripts:
       post-install: ./dist/scripts/post-install
       post-deinstall: ./dist/scripts/post-deinstall
 
