@@ -131,6 +131,21 @@ jobs:
       # bytes.
       - run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
 
+      - name: Set package version
+        shell: bash
+        run: |
+          set -euo pipefail
+          SUBJECT="$(git log -1 --format=%s)"
+          if [ "$GITHUB_REF" = "refs/heads/main" ] && [ "$SUBJECT" = "release: v2.0.0" ]; then
+            VER="2.0.0"
+          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VER="${GITHUB_REF_NAME#v}"
+          else
+            VER="$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || true)"
+          fi
+          test -n "$VER" || { echo "Cannot determine theme version"; exit 1; }
+          echo "FOOTSTRAP_VERSION=$VER" >> "$GITHUB_ENV"
+
       - run: ./tools/stage.sh
       - run: owfeed plan
       - run: owfeed check
@@ -141,7 +156,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: owfeed-packages
-          path: dist/noarch
+          path: dist/noarch/noarch
           if-no-files-found: error
 
   # Everything above proves the package was BUILT correctly. None of it proves what a user cares
@@ -162,7 +177,7 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           name: owfeed-packages
-          path: dist/
+          path: dist/noarch/
 
       # OpenWrt 25.12 is the sole supported release line and uses APK.
       - name: Install this build on 25.12 and render its pages
@@ -271,7 +286,7 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           name: owfeed-packages
-          path: dist/
+          path: dist/noarch/
       - uses: owfeed/owlab/setup@v0.6.5
         with:
           version: v0.6.1
@@ -382,7 +397,7 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           name: owfeed-packages
-          path: dist/
+          path: dist/noarch/
       - uses: owfeed/owlab/setup@v0.6.5
         with:
           version: v0.6.1
@@ -413,7 +428,7 @@ jobs:
     name: Record and verify the playground
     timeout-minutes: 20
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.0')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -428,7 +443,7 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           name: owfeed-packages
-          path: dist/
+          path: dist/noarch/
       - uses: owfeed/owlab/setup@v0.6.5
         with:
           version: v0.6.1
@@ -458,6 +473,74 @@ jobs:
           name: playground
           path: ${{ runner.temp }}/playground/playground.tar.gz
           if-no-files-found: error
+
+  publish-v2:
+    name: Publish REFFIX Monokai Pro v2.0.0
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: v2.0.0'
+    needs: [build, verify, live, anchors, lint, playground]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: owfeed-packages
+          path: dist/noarch/
+
+      - name: Verify APK set and prepare checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          APKs=(dist/noarch/*.apk)
+          (("${#APKs[@]}" > 0)) || { echo "No APK files were downloaded from the successful build."; exit 1; }
+          printf '%s\n' "${APKs[@]}"
+          sha256sum "${APKs[@]}" > dist/noarch/SHA256SUMS-openwrt-25.12.txt
+          test -s dist/noarch/SHA256SUMS-openwrt-25.12.txt
+
+      - name: Publish v2.0.0 and remove older release entries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/release-notes.md" <<'EOF'
+          # REFFIX Monokai Pro for LuCI v2.0.0
+
+          First REFFIX v2 release, built for OpenWrt 25.12 and newer using APK packages only.
+
+          - Monokai Pro dark palette coordinated with REFFIX Log Viewer.
+          - Theme APK and separate language APKs, where available.
+          - SHA-256 checksums for every published APK.
+
+          Installation instructions: https://github.com/REFFIX-X/luci-theme-footstrap#installation
+          Matching log viewer: https://github.com/REFFIX-X/luci-app-log
+          EOF
+
+          # Recreate this exact release so its tag points at the fully tested v2.0.0 source commit.
+          if gh release view v2.0.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release delete v2.0.0 --yes --cleanup-tag --repo "$GITHUB_REPOSITORY"
+          fi
+          gh api --method DELETE "repos/$GITHUB_REPOSITORY/git/refs/tags/v2.0.0" >/dev/null 2>&1 || true
+
+          gh release create v2.0.0 dist/noarch/*.apk dist/noarch/SHA256SUMS-openwrt-25.12.txt \
+            --target "$GITHUB_SHA" \
+            --title "v2.0.0 - REFFIX Monokai Pro for LuCI" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            --repo "$GITHUB_REPOSITORY"
+
+          # Keep exactly one entry in Releases, without destroying unrelated source-history tags.
+          while IFS= read -r OLD_TAG; do
+            [ -n "$OLD_TAG" ] || continue
+            [ "$OLD_TAG" = "v2.0.0" ] && continue
+            echo "Removing old release entry: $OLD_TAG"
+            gh release delete "$OLD_TAG" --yes --repo "$GITHUB_REPOSITORY"
+          done < <(gh release list --limit 1000 --json tagName --jq '.[].tagName' --repo "$GITHUB_REPOSITORY")
 
   # The only job that holds a key, and its `needs` is what keeps a tag from publishing a package no
   # router has installed. `lint` is named here rather than inherited through `build`, which stopped
