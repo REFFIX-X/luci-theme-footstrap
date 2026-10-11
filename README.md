@@ -2,6 +2,8 @@
 
 A REFFIX-maintained Monokai Pro colour edition of the Footstrap-based OpenWrt LuCI theme, tuned to match the REFFIX Firewall Log dashboard.
 
+**Current release:** [v2.0.0 for OpenWrt 25.12/APK](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0).
+
 ## Features
 
 - Monokai Pro dark surfaces and matching cyan, purple, pink, orange, green and yellow accents.
