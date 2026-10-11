@@ -21,6 +21,7 @@
 ### Added
 
 - **REFFIX Monokai Pro v2.0.0 is released for OpenWrt 25.12+ using APK only.** The theme has its own release page, manual install instructions and package checksums.
+- **The theme and language catalogues ship as separate APKs.** The release includes SHA-256 checksums for the OpenWrt 25.12 package set.
 
 ### Changed
 
