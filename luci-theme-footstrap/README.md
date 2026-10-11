@@ -26,7 +26,7 @@ The dark palette uses the same Monokai Pro-inspired colours as the REFFIX Firewa
 
 The package remains named `luci-theme-footstrap` to preserve package-manager upgrade compatibility with existing Flint4 installations. The LuCI-visible theme and package metadata are branded **REFFIX Monokai Pro**.
 
-Build/release metadata lives in `../owfeed.yml`; the generated stylesheet is built from `styles/` by `build-css.sh`. Do not edit generated `htdocs/luci-static/footstrap/cascade.css`.
+The release workflow builds the package with the official OpenWrt SDK, using this directory's `Makefile`. The generated stylesheet is built from `styles/` by `build-css.sh`. Do not edit generated `htdocs/luci-static/footstrap/cascade.css`.
 
 ## Credits and license
 

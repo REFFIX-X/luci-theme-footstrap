@@ -17,6 +17,22 @@ This release targets **OpenWrt 25.12 using APK**. The workflow builds the packag
 
 ## Installation
 
+### One-line installation (OpenWrt 25.12/APK)
+
+Run this over SSH as root on the router:
+
+```sh
+uclient-fetch -qO- https://raw.githubusercontent.com/REFFIX-X/luci-theme-footstrap/main/install-online.sh | sh
+```
+
+The installer downloads the release APK, verifies its SHA-256 checksum, and installs or upgrades the existing `luci-theme-footstrap` package.
+
+### Manual APK installation
+
+1. Open the [v2.0.0 release](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0) and download `reffix-luci-theme-footstrap-openwrt-25.12.apk` plus any language APK you need.
+2. Copy the package to the router and install it with `apk add --allow-untrusted /tmp/reffix-luci-theme-footstrap-openwrt-25.12.apk`.
+3. In LuCI, open **System → System → Language and Style** and choose **Monokai Pro** under **Design**.
+
 ### Install from the v2.0.0 release
 
 1. Open [**REFFIX Monokai Pro v2.0.0 Releases**](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0).

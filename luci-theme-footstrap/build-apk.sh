@@ -5,23 +5,18 @@
 #   ./build-apk.sh            # download SDK if needed, then build
 #   BUILD_DIR=~/x ./build-apk.sh
 #
-# This is NOT how the release is built — `./tools/stage.sh && owfeed build` is, and it produces both
-# formats in seconds without a toolchain. What this exercises is the OTHER path: the Makefile,
-# luci.mk, jsmin and the SDK's own packaging, which has to keep working for anyone building the
-# theme in an SDK or a feed without owfeed.
+# This is the OpenWrt SDK build path used by the release workflow. It replaces the upstream theme
+# source inside the SDK before building, avoiding duplicate package definitions in a custom feed.
 set -e
 
-# The point release and the compiler are both baked into the SDK's filename, so this default goes
-# stale twice over: downloads.openwrt.org keeps only the CURRENT point release of a branch, and a
-# toolchain bump changes the gcc string. Kept in step with owfeed.lock's `point:` for the 25.12
-# branch, which is what the release builds against. Override with OPENWRT_RELEASE=… and
-# OPENWRT_SDK_FILE=… for any other.
+# The point release and compiler are baked into the SDK filename. Override OPENWRT_RELEASE and
+# OPENWRT_SDK_FILE when intentionally testing against another SDK build.
 REL="${OPENWRT_RELEASE:-25.12.5}"
 SDK_BASE="https://downloads.openwrt.org/releases/${REL}/targets/mediatek/filogic"
 SDK_FILE="${OPENWRT_SDK_FILE:-openwrt-sdk-${REL}-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst}"
 SDK_URL="$SDK_BASE/$SDK_FILE"
 # MUST be a case-sensitive fs (ext4/…), NOT an NTFS/9p Windows mount.
-BUILD_DIR="${BUILD_DIR:-/tmp/ow-footstrap-build}"
+BUILD_DIR="${BUILD_DIR:-/tmp/reffix-footstrap-build}"
 # FORCE=1 overrides buildroot's host-prereq bail-outs (see step 4).
 export FORCE=1
 THEME_DIR="$(cd "$(dirname "$0")" && pwd)"          # this package
@@ -97,11 +92,17 @@ if [ ! -f feeds/luci.index ] && [ ! -d feeds/luci ]; then
 fi
 ./scripts/feeds install -a -p luci >/dev/null 2>&1 || true
 
-# 3. drop our theme into the luci themes feed (fresh copy)
+# 3. replace the upstream theme source in the SDK feed with our same-name package (fresh copy)
 DEST="feeds/luci/themes/luci-theme-footstrap"
 rm -rf "$DEST"
 cp -a "$THEME_DIR" "$DEST"
 rm -rf "$DEST/build-apk.sh" "$DEST/dev-sync.sh" "$DEST/.git" 2>/dev/null || true
+
+# Release-only version override goes into this copied SDK tree, never into the source Makefile.
+if [ -n "${FOOTSTRAP_VERSION:-}" ]; then
+	case "$FOOTSTRAP_VERSION" in *[!0-9.]*|'') echo "Invalid FOOTSTRAP_VERSION: $FOOTSTRAP_VERSION" >&2; exit 1 ;; esac
+	sed -i "/^PKG_NAME:=luci-theme-footstrap$/a PKG_VERSION:=$FOOTSTRAP_VERSION\\nPKG_RELEASE:=1" "$DEST/Makefile"
+fi
 
 ./scripts/feeds update -i luci
 ./scripts/feeds install luci-theme-footstrap

@@ -32,8 +32,8 @@ LUCI_URL:=https://github.com/REFFIX-X/luci-theme-footstrap
 # color-mix() and nested calc() and break the layout. build-css.sh minifies instead.
 LUCI_MINIFY_CSS:=0
 #
-# JS: the released package is built by owfeed (tools/stage.sh), never by this Makefile through
-# the SDK — so LUCI_MINIFY_JS keeps luci.mk's default jsmin here. jsmin decides regex-or-division
+# JS: the release workflow uses this Makefile through the OpenWrt SDK, where luci.mk's default
+# jsmin minifier is applied. jsmin decides regex-or-division
 # from a one-character lookback, and `n` (of `return`) and `>` (of `=>`) are not on its
 # allow-list, so `return /re/` makes it eat the rest of the file AND EXIT 0 (openwrt/luci#8299).
 # eslint's `wrap-regex` bans the shape in the source; tools/jsmin-verify.mjs proves jsmin's output
