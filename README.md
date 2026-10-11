@@ -26,7 +26,9 @@ Built and tested for OpenWrt 25.12+ using APK packages only. IPK/opkg builds are
 3. Copy the APK files to your OpenWrt 25.12 router. For example, from Windows PowerShell:
 
    ```powershell
-   scp .\luci-theme-footstrap-*.apk root@192.168.1.1:/tmp/
+   Get-ChildItem .\luci-theme-footstrap-*.apk | ForEach-Object {
+       scp $_.FullName root@192.168.1.1:/tmp/
+   }
    ```
 
 4. SSH into the router and install the downloaded APK package(s):
