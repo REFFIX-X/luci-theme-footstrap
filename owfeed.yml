@@ -58,8 +58,7 @@ packages:
   - name: luci-theme-footstrap
     build: mkpkg
     # Never "all" here: apk rejects `all` as uninstallable, which is why OpenWrt's package-pack.mk
-    # rewrites LUCI_PKGARCH:=all into arch:noarch on the way to mkpkg. The ipk leg gets `all` from
-    # owfeed, not from this line.
+    # rewrites LUCI_PKGARCH:=all into arch:noarch on the way to mkpkg.
     arch: noarch
     # Written by tools/stage.sh from the tag (CI) or the newest tag (a working tree), with the -r1
     # that PKG_RELEASE:=1 puts on every asset name.
