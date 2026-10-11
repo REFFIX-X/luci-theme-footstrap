@@ -1,55 +1,28 @@
-# luci-theme-footstrap
+# REFFIX Monokai Pro для LuCI
 
-Тема LuCI для OpenWrt 24.10 и новее. Зависит только от `luci-base`, оформляет каждую страницу LuCI,
-включая сторонние `luci-app-*`, и не трогает то, что приложение оформляет само. Работает на телефоне и ставится на его домашний
-экран. 21 настройка внешнего вида (раскладка, палитра, плотность, цвета, обои) применяется без
-перезагрузки страницы.
+Тёмная тема REFFIX Monokai Pro для LuCI в OpenWrt. Оформление основано на Footstrap и согласовано с панелью REFFIX Log Viewer.
 
-[English](README.md) · [Песочница: тема в браузере, роутер не нужен](https://vizzletf.github.io/luci-theme-footstrap/playground/)
+## Совместимость
 
-<picture>
-  <source media="(max-width: 767px)" srcset="assets/readme/phone-menu-dark.png">
-  <img src="assets/readme/overview-top-dark.png" width="100%" alt="Страница обзора в тёмной теме с верхней панелью: меню стоит в строке бренда, контент идёт во всю ширину.">
-</picture>
+Тема собирается только для OpenWrt 25.12 и более новых версий с пакетным менеджером APK. Пакеты IPK/opkg больше не публикуются.
 
 ## Установка
 
-Нужны OpenWrt 24.10 или новее и браузер не старше Chrome 108, Firefox 101 или Safari 15.4. На 23.05
-установщик ставит 0.14.2: более новые версии используют виджет LuCI, которого в 23.05 нет.
+Пакет сохраняет идентификатор `luci-theme-footstrap`, чтобы обновление существующей установки не требовало миграции имени пакета. Установите или обновите пакет из настроенного фида, затем откройте **System → System → Language and Style** и выберите **Monokai Pro**.
 
-Выполните на роутере под root, по SSH:
+## Цвета
 
-```sh
-wget -qO- https://raw.githubusercontent.com/VizzleTF/luci-theme-footstrap/main/install.sh | sh
-```
+- Фон: `#2D2A2E`
+- Панели: `#221F22`
+- Поверхность: `#343136`
+- Текст: `#FCFCFA`
+- Жёлтый: `#FFD866`
+- Оранжевый: `#FC9867`
+- Розовый: `#FF6188`
+- Зелёный: `#A9DC76`
+- Голубой: `#78DCE8`
+- Фиолетовый: `#AB9DF2`
 
-Скрипт добавляет фид пакетов темы, проверяет подпись и контрольную сумму пакета и ставит тему.
-Потом печатает, что сделал: поставил, обновил с такой-то версии или всё уже актуально. Новые версии дальше приходят вместе с `apk upgrade` или `opkg upgrade`
-роутера.
+## Лицензия и авторство
 
-Если `raw.githubusercontent.com` отвечает 429 (общий выход или CGNAT), запустите подписанную копию,
-приложенную к последнему релизу:
-
-```sh
-wget -qO- https://github.com/VizzleTF/luci-theme-footstrap/releases/latest/download/install.sh | sh
-```
-
-Затем откройте **System → System → Language and Style**, выберите **Footstrap** в поле **Design** и
-нажмите **Save & Apply**. Удалить тему: `apk del luci-theme-footstrap` (или
-`opkg remove luci-theme-footstrap`); LuCI вернётся к bootstrap.
-
-## Скорость
-
-На том же роутере медианная страница отрисовывается в 3.03 раза быстрее, чем со стоковой темой
-bootstrap. Обход 38 страниц занимает 4.9 с вместо 11.3 с. Методика и данные:
-[docs/benchmark.md](docs/benchmark.md).
-
-## Ссылки
-
-- [Скриншоты](docs/screenshots/)
-- [Документация для разработчика](docs/README.md), на английском: начните с
-  [architecture.md](docs/architecture.md) и [conventions.md](docs/conventions.md)
-- [Как оформить `luci-app`, чтобы он работал под любой темой](docs/luci-app-styling-guide_ru.md) и
-  [devkit](https://vizzletf.github.io/luci-theme-footstrap/), который проверяет его CSS
-- [История изменений](CHANGELOG_ru.md) · [Фид пакетов](https://owfeed.org/install/ru/) ·
-  [Лицензия: Apache-2.0](LICENSE)
+Это цветовая и брендинговая адаптация [Footstrap](https://github.com/VizzleTF/luci-theme-footstrap). Сохранены исходные уведомления об авторских правах и лицензии Apache-2.0.
