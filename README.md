@@ -39,7 +39,7 @@ Built and tested for OpenWrt 25.12+ using APK packages only. IPK/opkg builds are
 
    If you downloaded a translation package, install that too using its exact filename. Use only APK packages built for OpenWrt 25.12+; this project does not publish IPK/opkg packages.
 
-5. In LuCI, open **System → System → Language and Style**, then choose **Monokai Pro** under Design.
+5. In LuCI, open **System → System → Language and Style**, then choose **Monokai Pro** under Design. If the previous stylesheet is still cached, hard-refresh LuCI with **Ctrl+F5**.
 
 ### Option 2: Install from a configured package feed
 
