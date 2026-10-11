@@ -30,20 +30,13 @@ The installer downloads the release APK, verifies its SHA-256 checksum, and inst
 ### Manual APK installation
 
 1. Open the [v2.0.0 release](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0) and download `reffix-luci-theme-footstrap-openwrt-25.12.apk` plus any language APK you need.
-2. Copy the package to the router and install it with `apk add --allow-untrusted /tmp/reffix-luci-theme-footstrap-openwrt-25.12.apk`.
-3. In LuCI, open **System → System → Language and Style** and choose **Monokai Pro** under **Design**.
-
-### Install from the v2.0.0 release
-
-1. Open [**REFFIX Monokai Pro v2.0.0 Releases**](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0).
-2. Download `reffix-luci-theme-footstrap-openwrt-25.12.apk` and, if you need a translation, the matching language package.
-3. Copy the downloaded APK to your router. From Windows PowerShell, in the folder containing the downloaded file:
+2. Copy the theme APK from Windows PowerShell, in the folder containing the download:
 
    ```powershell
    scp .\reffix-luci-theme-footstrap-openwrt-25.12.apk root@192.168.1.1:/tmp/
    ```
 
-4. SSH into the router and install the package:
+3. SSH into the router and install the package:
 
    ```sh
    apk add --allow-untrusted /tmp/reffix-luci-theme-footstrap-openwrt-25.12.apk
@@ -51,7 +44,7 @@ The installer downloads the release APK, verifies its SHA-256 checksum, and inst
 
    Install any downloaded language package the same way, using its exact filename.
 
-5. In LuCI, open **System → System → Language and Style** and choose **Monokai Pro** under **Design**. If the old styles remain visible, hard-refresh the page with **Ctrl+F5**.
+4. In LuCI, open **System → System → Language and Style** and choose **Monokai Pro** under **Design**. If the old styles remain visible, hard-refresh the page with **Ctrl+F5**.
 
 ### Verify the download
 
