@@ -36,10 +36,6 @@ cd "$(dirname "$0")/.."
 # thing to notice, which is the wrong failure for "nothing was built".
 [ -d dist ] || { echo "check-packages: no dist/ — run tools/stage.sh && owfeed build first"; exit 1; }
 
-ipk_list() {			# <ipk> -> the paths inside it
-	tar -xzOf "$1" ./data.tar.gz | tar -tz
-}
-
 # <apk> -> the paths inside it. See the header comment for what this decodes and against what it was
 # checked. python3 is already a hard dependency of this repo's gates (tools/audit.py), so requiring
 # it here costs nothing new.
@@ -152,81 +148,41 @@ for dval in slots(root[PKG_PATHS])[1:]:
 PY
 }
 
-# `tr -d ' '` on every wc: BSD wc pads its count to 8 columns while the other side of each comparison
-# is unpadded, and `[ … = … ]` is a STRING test — so without the strip the gate is green in CI and
-# fails locally on a correct package, which teaches the maintainer to ignore it.
+# The published package set is OpenWrt 25.12/APK only.
 langs=$(find luci-theme-footstrap/po -mindepth 1 -maxdepth 1 -type d ! -name templates -exec basename {} \;)
 [ -n "$langs" ] || { echo "no language directory under po/ — the glob is wrong, not the build"; exit 1; }
 
-# `listing=$(reader "$f")`, never `reader "$f" | grep … || true`: the `|| true` a `grep -c` with no
-# match needs (its own exit status is 1 on a legitimate zero) also swallows the READER's exit status
-# once it sits upstream of a pipe, and a reader that fails to open the file prints nothing, which
-# `grep -c` then also reports as a truthful zero. A zero-byte apk stayed "0 stray catalogues" this
-# way even after apk_list() started refusing it — caught only by luck, on the count that expects
-# exactly 1. Assigning the listing on its own line fails the assignment itself under `set -e`, which
-# a pipeline's exit status (the last command's, here) does not.
-ipk_listing=$(ipk_list dist/all/luci-theme-footstrap_*_all.ipk)
-stray=$(printf '%s\n' "$ipk_listing" | grep -c 'i18n/.*\.lmo' || true)
-[ "$stray" = 0 ] || {
-	echo "the theme .ipk carries $stray catalogue(s) of its own — every router would pay for"
-	echo "them, and the language package owning the same path cannot install over it"
-	exit 1
-}
-
-theme_apk=$(find dist -mindepth 2 -type f -name "luci-theme-footstrap[-_]*.apk" | head -1)
-[ -n "$theme_apk" ] || { echo "no luci-theme-footstrap .apk in dist/ to open"; exit 1; }
+theme_apk=$(find dist/noarch -type f -name "luci-theme-footstrap-*.apk" | head -1)
+[ -n "$theme_apk" ] || { echo "no luci-theme-footstrap .apk in dist/noarch/ to open"; exit 1; }
 apk_listing=$(apk_list "$theme_apk")
 astray=$(printf '%s\n' "$apk_listing" | grep -c 'i18n/.*\.lmo' || true)
 [ "$astray" = 0 ] || {
-	echo "the theme .apk carries $astray catalogue(s) of its own — every router would pay for"
-	echo "them, and the language package owning the same path cannot install over it"
+	echo "the theme .apk carries $astray catalogue(s) of its own; catalogues must live in language packages"
 	exit 1
 }
 
 n=0
 for lang in $langs; do
-	f=$(find dist/all -name "luci-i18n-footstrap-${lang}_*_all.ipk" | head -1)
-	[ -n "$f" ] || { echo "po/$lang has no luci-i18n-footstrap-$lang package in dist/"; exit 1; }
-	listing=$(ipk_list "$f")
+	f=$(find dist/noarch -type f -name "luci-i18n-footstrap-${lang}-*.apk" | head -1)
+	[ -n "$f" ] || { echo "po/$lang has no luci-i18n-footstrap-$lang APK in dist/noarch/"; exit 1; }
+	listing=$(apk_list "$f")
 	got=$(printf '%s\n' "$listing" | grep -c "i18n/footstrap\.${lang}\.lmo\$" || true)
 	[ "$got" = 1 ] || {
-		echo "luci-i18n-footstrap-$lang .ipk carries $got catalogue(s) named footstrap.$lang.lmo,"
-		echo "expected exactly 1 — po2lmo writes that name in an SDK build and the two must agree"
+		echo "luci-i18n-footstrap-$lang APK carries $got catalogues named footstrap.$lang.lmo; expected exactly 1"
 		exit 1
 	}
-	# the uci-defaults line is what puts the language in LuCI's own menu; without it the catalogue
-	# loads only for someone who set the language by hand
 	printf '%s\n' "$listing" | grep -q "etc/uci-defaults/luci-i18n-footstrap-$lang\$" || {
-		echo "luci-i18n-footstrap-$lang .ipk registers no language — LuCI's menu would not offer it"
+		echo "luci-i18n-footstrap-$lang APK does not register its language in LuCI's menu"
 		exit 1
 	}
-
-	# the apk leg of the same package: opened for real, not just named — see apk_list() above for
-	# why a filename match alone used to be "enough".
-	af=$(find dist/noarch -name "luci-i18n-footstrap-${lang}-*.apk" | head -1)
-	[ -n "$af" ] || { echo "po/$lang has no luci-i18n-footstrap-$lang .apk in dist/"; exit 1; }
-	alisting=$(apk_list "$af")
-	agot=$(printf '%s\n' "$alisting" | grep -c "i18n/footstrap\.${lang}\.lmo\$" || true)
-	[ "$agot" = 1 ] || {
-		echo "luci-i18n-footstrap-$lang .apk carries $agot catalogue(s) named footstrap.$lang.lmo,"
-		echo "expected exactly 1"
-		exit 1
-	}
-	printf '%s\n' "$alisting" | grep -q "etc/uci-defaults/luci-i18n-footstrap-$lang\$" || {
-		echo "luci-i18n-footstrap-$lang .apk registers no language — LuCI's menu would not offer it"
-		exit 1
-	}
-
 	n=$((n + 1))
 done
-echo "$n language package(s), one catalogue each, none in the theme, on both formats."
+echo "$n language package(s), one catalogue each, none in the theme, OpenWrt 25.12/APK only."
 
-find dist -mindepth 2 -type f \( -name '*.apk' -o -name '*.ipk' \) -print
-for ext in apk ipk; do
-	m=$(find dist -mindepth 2 -type f -name "*.$ext" -exec basename {} \; \
-		| grep -cE "^luci-theme-footstrap[-_][^/]*\.$ext$" || true)
-	[ "$m" = 1 ] || { echo "expected exactly 1 luci-theme-footstrap .$ext, got $m"; exit 1; }
-	# and the language packages must not answer to the theme's name pattern
-	i=$(find dist -mindepth 2 -type f -name "luci-i18n-footstrap-*.$ext" | wc -l | tr -d ' ')
-	[ "$i" = "$n" ] || { echo "expected $n luci-i18n .$ext, got $i"; exit 1; }
-done
+find dist/noarch -mindepth 1 -type f -name '*.apk' -print
+m=$(find dist/noarch -type f -name 'luci-theme-footstrap-*.apk' | wc -l | tr -d ' ')
+[ "$m" = 1 ] || { echo "expected exactly 1 theme APK, got $m"; exit 1; }
+i=$(find dist/noarch -type f -name 'luci-i18n-footstrap-*.apk' | wc -l | tr -d ' ')
+[ "$i" = "$n" ] || { echo "expected $n language APKs, got $i"; exit 1; }
+ipks=$(find dist -type f -name '*.ipk' -print)
+[ -z "$ipks" ] || { echo "unexpected IPK files in an APK-only build:"; printf '%s\n' "$ipks"; exit 1; }
