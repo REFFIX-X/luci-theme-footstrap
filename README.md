@@ -15,7 +15,38 @@ Built and tested for OpenWrt 25.12+ using APK packages only. IPK/opkg builds are
 
 ## Installation
 
-The package currently retains the identifier `luci-theme-footstrap` so an existing installation can be upgraded without a package-name migration. Install or upgrade the package using your configured package feed, then open **System → System → Language and Style** and select **Monokai Pro**.
+### Option 1: Install the v2.0 APK release
+
+1. Open [**REFFIX Monokai Pro v2.0 Releases**](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.0).
+2. Download the theme package named `luci-theme-footstrap-*.apk` and the language package you want, `luci-i18n-footstrap-<lang>-*.apk`, if provided.
+3. Copy the APK files to your OpenWrt 25.12 router. For example, from Windows PowerShell:
+
+   ```powershell
+   scp .\luci-theme-footstrap-*.apk root@192.168.1.1:/tmp/
+   ```
+
+4. SSH into the router and install the downloaded APK package(s):
+
+   ```sh
+   apk add --allow-untrusted /tmp/luci-theme-footstrap-*.apk
+   ```
+
+   If you downloaded a translation package, install that too using its exact filename. Use only APK packages built for OpenWrt 25.12+; this project does not publish IPK/opkg packages.
+
+5. In LuCI, open **System → System → Language and Style**, then choose **Monokai Pro** under Design.
+
+### Option 2: Install from a configured package feed
+
+If the v2.0 package feed is configured on your router, run:
+
+```sh
+apk update
+apk add luci-theme-footstrap
+```
+
+Then select **Monokai Pro** under **System → System → Language and Style**.
+
+**Upgrade note:** the installed package identifier remains `luci-theme-footstrap` to preserve compatibility with existing installations.
 
 The package source is in [`luci-theme-footstrap/`](luci-theme-footstrap/). The generated CSS is built from the source files in `luci-theme-footstrap/styles/`.
 
