@@ -169,7 +169,7 @@ define Package/luci-theme-footstrap/postrm
 # correct for both managers.
 case "$$1" in *upgrade*) exit 0 ;; esac
 [ -n "$${IPKG_INSTROOT}" ] || {
-	uci -q delete luci.themes.Footstrap
+	uci -q delete luci.themes.MonokaiPro
 	# Don't leave the active theme pointing at the media dir we just removed: a theme needs its
 	# media dir AND its ucode template to render, so both are checked before handing the UI over.
 	case "$$(uci -q get luci.main.mediaurlbase)" in
