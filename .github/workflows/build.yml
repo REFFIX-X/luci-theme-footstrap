@@ -1,5 +1,4 @@
-# luci-theme-footstrap is noarch: one build, two containers (apk for 25.12+, ipk for 24.10), both
-# out of owfeed rather than an OpenWrt SDK. docs/conventions.md has why.
+# REFFIX Monokai Pro is noarch and builds OpenWrt 25.12+ APK packages only, using owfeed.
 #
 # The release pipeline itself is owfeed's `package.yml`, shared by every repository in this
 # ecosystem. What is here is this theme's own gates: each one line, each a script under tools/ whose
@@ -142,9 +141,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: owfeed-packages
-          path: |
-            dist/noarch
-            dist/all
+          path: dist/noarch
           if-no-files-found: error
 
   # Everything above proves the package was BUILT correctly. None of it proves what a user cares
@@ -167,7 +164,7 @@ jobs:
           name: owfeed-packages
           path: dist/
 
-      # ONE RELEASE PER STEP: 25.12 is apk and 24.10 is opkg, and neither installs the other's file.
+      # OpenWrt 25.12 is the sole supported release line and uses APK.
       - name: Install this build on 25.12 and render its pages
         uses: owfeed/owlab/action@v0.6.5
         with:
@@ -178,21 +175,6 @@ jobs:
           # and with the router's real luci.core and uci, so it needs no stubs. A stray brace here
           # is the one way this repository can ship a completely broken UI with everything else
           # green: LuCI falls back to another theme and says nothing.
-          assert: |
-            package luci-theme-footstrap
-            file /www/luci-static/footstrap/cascade.css
-            http 200 /cgi-bin/luci/admin/status/overview
-            http 200 /cgi-bin/luci/admin/system/system
-            exec for f in /usr/share/ucode/luci/template/themes/footstrap/*.ut; do ucode -T -c -o /dev/null "$f" || exit 1; done
-
-      - name: Install this build on 24.10 and render its pages
-        uses: owfeed/owlab/action@v0.6.5
-        with:
-          version: v0.6.1
-          releases: "24.10.8"
-          install: dist/all/luci-theme-footstrap_*.ipk
-          # The same compile as the 25.12 leg, and not redundant: the templates are identical but
-          # the interpreters are not, and what 25.12's ucode accepts 24.10's may not.
           assert: |
             package luci-theme-footstrap
             file /www/luci-static/footstrap/cascade.css
