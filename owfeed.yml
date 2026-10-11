@@ -133,7 +133,7 @@ packages:
     # both are true. The pin re-fires the rule on every upgrade of the theme; `luci-i18n-base-ru`
     # is what "this router is Russian" looks like to a package manager, which cannot read
     # `uci luci.main.lang`.
-        install-if: [ "luci-theme-footstrap={version}", "luci-i18n-base-ru" ]
+    install-if: [ "luci-theme-footstrap={version}", "luci-i18n-base-ru" ]
 
   - name: luci-i18n-footstrap-es
     build: mkpkg
