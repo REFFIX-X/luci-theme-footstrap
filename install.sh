@@ -1,6 +1,6 @@
 #!/bin/sh
-# luci-theme-footstrap installer, OpenWrt 24.10 (opkg) / 25.12+ (apk); 23.05 gets the pinned final
-# release. docs/package.md, "install.sh". Re-running upgrades the theme. Licensed Apache-2.0.
+# REFFIX Monokai Pro installer for OpenWrt 25.12+ (APK only). Re-running upgrades the theme.
+# Licensed Apache-2.0; upstream licence notices remain in the source tree.
 #
 #   wget -qO- https://raw.githubusercontent.com/VizzleTF/luci-theme-footstrap/main/install.sh | sh
 #
@@ -10,6 +10,22 @@
 #   wget -qO- https://github.com/VizzleTF/luci-theme-footstrap/releases/latest/download/install.sh | sh
 
 set -e
+
+# This fork only publishes APK packages for OpenWrt 25.12+. Fail early on older opkg/IPK systems
+# rather than half-configuring a feed that no longer has packages for that release line.
+command -v apk >/dev/null 2>&1 || {
+	printf '[-] REFFIX Monokai Pro supports OpenWrt 25.12+ with APK only; IPK/opkg packages are not built.\n' >&2
+	exit 1
+}
+[ -f /etc/openwrt_release ] || {
+	printf '[-] Not an OpenWrt system.\n' >&2
+	exit 1
+}
+. /etc/openwrt_release
+case "${DISTRIB_RELEASE:-}" in
+	25.12*|SNAPSHOT) ;;
+	*) printf '[-] This build supports OpenWrt 25.12/APK only (detected %s).\n' "${DISTRIB_RELEASE:-unknown}" >&2; exit 1 ;;
+esac
 
 FEED_HOST="https://repo.owfeed.org"
 FEED_NAME="owfeed-packages"
