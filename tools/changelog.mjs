@@ -92,9 +92,13 @@ function addPair(argv) {
 	const idx = Number(argv[0]);
 	const flag = (n) => { const i = argv.indexOf(n); return i < 0 ? '' : argv[i + 1] ?? ''; };
 	const pair = { 'CHANGELOG.md': flag('--en'), 'CHANGELOG_ru.md': flag('--ru') };
-	if (!Number.isInteger(idx) || idx < 0 || idx > 6 || !Object.values(pair).every(b => b.startsWith('- **')))
-		throw new Error('usage: changelog.mjs add <0-6> --en "- **lead.** …" --ru "- **lead.** …"');
-	for (const [file, bullet] of Object.entries(pair)) {
+	const ruText = readFileSync(join(ROOT, 'CHANGELOG_ru.md'), 'utf8');
+	const files = ruText.trim() ? Object.entries(pair) : [['CHANGELOG.md', pair['CHANGELOG.md']]];
+	if (!Number.isInteger(idx) || idx < 0 || idx > 6 || !files.every(([, bullet]) => bullet.startsWith('- **')))
+		throw new Error(ruText.trim()
+			? 'usage: changelog.mjs add <0-6> --en "- **lead.** …" --ru "- **lead.** …"'
+			: 'usage: changelog.mjs add <0-6> --en "- **lead.** …"');
+	for (const [file, bullet] of files) {
 		const canon = CANON[file], sec = canon[idx];
 		const work = readFileSync(join(ROOT, file), 'utf8');
 		let staged;
@@ -112,6 +116,8 @@ const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 function gate() {
 	const fails = [];
 	const fail = (file, line, msg) => fails.push(`${file}:${line}: ${msg}`);
+	let hasRuMirror = false;
+	try { hasRuMirror = readFileSync(join(ROOT, 'CHANGELOG_ru.md'), 'utf8').trim().length > 0; } catch { /* optional mirror */ }
 
 	/* Parse into versions -> sections -> bullets. A bullet is a top-level `- ` at column 0; the
 	 * rationale that follows it is indented, so it never counts as one. */
@@ -142,7 +148,10 @@ function gate() {
 		return { versions, links };
 	}
 
-	for (const [file, canon] of Object.entries(CANON)) {
+	const checkedFiles = hasRuMirror
+		? Object.entries(CANON)
+		: [['CHANGELOG.md', CANON['CHANGELOG.md']]];
+	for (const [file, canon] of checkedFiles) {
 		const { versions, links } = parse(file);
 		const tagged = (tag, f) => { try { return git('show', `${tag}:${f}`); } catch { return null; } };
 		for (const id of sealedDrift(file, readFileSync(join(ROOT, file), 'utf8'), tagged))
@@ -212,7 +221,9 @@ function gate() {
 	/* THE MIRROR: same facts, only the prose language differs (docs/releasing.md). A mirror that lags is worse
 	 * than none — the reader cannot tell which copy is stale — and nothing renders differently when it
 	 * does, so only a comparison finds it. Sections are matched by CANONICAL INDEX, never by name. */
-	const en = parse('CHANGELOG.md'), ru = parse('CHANGELOG_ru.md');
+	const en = parse('CHANGELOG.md');
+	if (hasRuMirror) {
+		const ru = parse('CHANGELOG_ru.md');
 	const enIds = en.versions.map(v => v.id), ruIds = ru.versions.map(v => v.id);
 
 	if (enIds.join() !== ruIds.join()) {
@@ -247,6 +258,10 @@ function gate() {
 		}
 	}
 
+	} else {
+		console.log('changelog: CHANGELOG_ru.md is empty; validating the English changelog only');
+	}
+
 	const vcount = en.versions.length;
 
 	// Printed only once the checks above are known to hold: this line used to run before the
@@ -256,11 +271,11 @@ function gate() {
 	if (fails.length) {
 		console.error('\nchangelog: FAILED\n');
 		for (const f of fails) console.error(`  ${f}`);
-		console.error('\nThe contract is docs/releasing.md. Both files are edited in one commit.');
+		console.error('\nThe contract is docs/releasing.md. Keep English valid and update a configured RU mirror in the same commit.');
 		process.exit(1);
 	}
 
-	console.log(`changelog: ${vcount} version(s), mirror in lockstep, sections canonical`);
+	console.log(`changelog: ${vcount} version(s), sections canonical${hasRuMirror ? ', RU mirror in lockstep' : ', no RU mirror configured'}`);
 	console.log('changelog: the release notes will generate cleanly.');
 
 }
