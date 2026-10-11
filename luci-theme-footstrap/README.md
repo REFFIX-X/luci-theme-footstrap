@@ -1,6 +1,6 @@
 # REFFIX Monokai Pro LuCI Theme
 
-REFFIX's Monokai Pro colour edition of the Footstrap-based LuCI theme for OpenWrt 24.10 and newer.
+REFFIX's Monokai Pro colour edition of the Footstrap-based LuCI theme for OpenWrt 25.12 and newer, using APK packages only.
 
 The theme keeps the existing layout, responsive shell, LuCI form styling, appearance controls and local assets while aligning the dark interface with the REFFIX Log Viewer.
 
