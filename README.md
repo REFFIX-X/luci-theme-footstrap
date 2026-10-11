@@ -11,7 +11,7 @@ A REFFIX-maintained Monokai Pro colour edition of the Footstrap-based OpenWrt Lu
 
 ## Compatibility
 
-Designed for OpenWrt 24.10 and newer with LuCI's ucode templates. Browser support follows the underlying Footstrap implementation.
+Built and tested for OpenWrt 25.12+ using APK packages only. IPK/opkg builds are not published. Browser support follows the underlying Footstrap implementation.
 
 ## Installation
 
