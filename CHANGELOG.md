@@ -1,8 +1,11 @@
 ## [Unreleased]
 
+## [2.0.2] — 2026-10-12
+
 ### Changed
 
 - **Pending configuration changes are easier to spot.** LuCI staged changes now use a warning treatment in navigation, and apply countdowns use stable, emphasized figures.
+- **The v2.0.2 release workflow and README now agree on the current version.** The package build, release tag and download links all use the same version.
 
 ## [2.0.1] — 2026-10-12
 
@@ -4758,3 +4761,5 @@ line, not one per tag. The individual patch releases are in the git history.
 [0.1.x]: https://github.com/VizzleTF/luci-theme-footstrap/commits/v0.1.1
 [2.0.0]: https://github.com/REFFIX-X/luci-theme-footstrap/compare/v0.14.14...v2.0.0
 [2.0.1]: https://github.com/REFFIX-X/luci-theme-footstrap/compare/v2.0.0...v2.0.1
+[Unreleased]: https://github.com/REFFIX-X/luci-theme-footstrap/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/REFFIX-X/luci-theme-footstrap/compare/v2.0.1...v2.0.2

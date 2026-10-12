@@ -2,7 +2,7 @@
 
 A REFFIX-maintained Monokai Pro colour edition of the Footstrap-based OpenWrt LuCI theme, tuned to match the REFFIX Firewall Log dashboard.
 
-**Release:** [v2.0.1 for OpenWrt 25.12/APK](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.1)
+**Release:** [v2.0.2 for OpenWrt 25.12/APK](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.2)
 
 ## Features
 
@@ -39,7 +39,7 @@ The installer downloads the release APK, verifies its SHA-256 checksum, and inst
 
 ### Manual APK installation
 
-1. Open the [v2.0.1 release](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.1) and download `reffix-luci-theme-footstrap-openwrt-25.12.apk` plus any language APK you need.
+1. Open the [v2.0.2 release](https://github.com/REFFIX-X/luci-theme-footstrap/releases/tag/v2.0.2) and download `reffix-luci-theme-footstrap-openwrt-25.12.apk` plus any language APK you need.
 2. Copy the theme APK from Windows PowerShell, in the folder containing the download:
 
    ```powershell
