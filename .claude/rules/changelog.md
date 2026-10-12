@@ -6,21 +6,22 @@ description: The changelog contract — sections, the bold lead, and the bilingu
 
 # The changelog
 
-**NO COMMIT LANDS WITHOUT ITS CHANGELOG ENTRY.** It goes under `## [Unreleased]`, in the **same
-commit as the code**, and in **BOTH `CHANGELOG.md` AND `CHANGELOG_ru.md`** — never one now and its
-mirror later. An entry written afterwards is written from the diff, and the diff is exactly what
-does not know why. This covers documentation, benchmarks, CI and packaging too, not just code: if
-the commit is worth making, it is worth one line saying what changed. The only things that skip it
-are `CLAUDE.md` and a fix to an `[Unreleased]` entry already written.
+**NO COMMIT LANDS WITHOUT ITS CHANGELOG ENTRY.** It goes under `## [Unreleased]` in `CHANGELOG.md`
+in the **same commit as the code**. If `CHANGELOG_ru.md` is configured with content, its matching
+entry goes in the same commit too — never one now and its mirror later. An entry written afterwards
+is written from the diff, and the diff is exactly what does not know why. This covers documentation,
+benchmarks, CI and packaging too, not just code: if the commit is worth making, it is worth one line
+saying what changed. The only things that skip it are `CLAUDE.md` and a fix to an `[Unreleased]`
+entry already written.
 
 Enforced by `.claude/hooks/precommit-gate.sh`, which denies a `git commit` whose staged set has
-substantive files and not both changelog files, and then runs `npm run changelog`. The hook is the
+substantive files and no English entry, or no Russian entry while the mirror is configured, and then runs `npm run changelog`. The hook is the
 defence; this page is the reason, and the prose below is the half no gate can check.
 
 - List entries with `grep -n '^- \*\*' CHANGELOG.md`, never cat/awk the `[Unreleased]` block: it has run to 81 KB.
 - `npm run changelog` also fails when the newest released `## [X]` differs from `git show vX:CHANGELOG.md`
   (a rebase or cherry-pick moved an entry into it). `node tools/changelog.mjs add <0-6> --en '- **…**' --ru '- **…**'`
-  puts one bullet pair into both files' `[Unreleased]` (0 = Added … 6 = Performance), in the worktree and the index only.
+  puts one bullet pair into both files' `[Unreleased]` when the Russian mirror is configured, or English only otherwise (0 = Added … 6 = Performance), in the worktree and the index only.
   Not checked: that a bullet sits under the same `###` as in its commit — that needs `git log -S` per bullet, which a reword or rebase breaks.
 - Sections are `Added / Changed / Deprecated / Removed / Fixed / Security / Performance`, one of
   each per version, in that fixed order — append into the section that already exists in its

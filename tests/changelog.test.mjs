@@ -13,11 +13,13 @@ const DOC = [
 test('sectionText stops at the next heading and at the link list', () => {
 	assert.equal(sectionText(DOC, '1.0.0'), '## [1.0.0] — 2026-01-01\n\n### Added\n\n- **c.** z');
 	assert.equal(sectionText(DOC, '9.9.9'), null);
+	assert.equal(sectionText(DOC.replace(/\n/g, '\r\n'), '1.0.0'), sectionText(DOC, '1.0.0'));
 });
 
 test('insertBullet appends to an existing section, before the blank line', () => {
 	const out = insertBullet(DOC, CANON, 'Changed', '- **n.** new');
 	assert.match(out, /### Changed\n\n- \*\*a\.\*\* x\n- \*\*n\.\*\* new\n\n### Fixed/);
+	assert.match(insertBullet(DOC.replace(/\n/g, '\r\n'), CANON, 'Changed', '- **n.** new'), /### Changed\n\n- \*\*a\.\*\* x\n- \*\*n\.\*\* new/);
 });
 
 test('insertBullet creates a missing section in its canonical slot', () => {

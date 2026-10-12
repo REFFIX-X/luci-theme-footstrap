@@ -84,8 +84,10 @@ SUBSTANTIVE=$(printf '%s\n' "$FILES" | grep -v -x -e 'CLAUDE.md' -e 'CHANGELOG.m
 if [ -n "$SUBSTANTIVE" ]; then
 	HAS_EN=$(printf '%s\n' "$FILES" | grep -c -x 'CHANGELOG.md' || true)
 	HAS_RU=$(printf '%s\n' "$FILES" | grep -c -x 'CHANGELOG_ru.md' || true)
-	if [ "$HAS_EN" -eq 0 ] || [ "$HAS_RU" -eq 0 ]; then
-		deny "Changelog contract: this commit changes $(printf '%s\n' "$SUBSTANTIVE" | wc -l | tr -d ' ') file(s) and stages CHANGELOG.md=$HAS_EN CHANGELOG_ru.md=$HAS_RU. Both must be in the SAME commit, under ## [Unreleased], as '- **one-line effect.** then the rationale'. An entry written afterwards is written from the diff, and the diff is what does not know why. Exempt: CLAUDE.md alone, or a fix to an [Unreleased] entry already written. Files: $(printf '%s' "$SUBSTANTIVE" | tr '\n' ' ')"
+	RU_CONFIGURED=false
+	if git show :CHANGELOG_ru.md 2>/dev/null | grep -q '[^[:space:]]'; then RU_CONFIGURED=true; fi
+	if [ "$HAS_EN" -eq 0 ] || { [ "$RU_CONFIGURED" = true ] && [ "$HAS_RU" -eq 0 ]; }; then
+		deny "Changelog contract: this commit changes $(printf '%s\n' "$SUBSTANTIVE" | wc -l | tr -d ' ') file(s) and stages CHANGELOG.md=$HAS_EN CHANGELOG_ru.md=$HAS_RU (configured Russian mirror: $RU_CONFIGURED). The English entry is required, and a configured Russian mirror must be updated in the SAME commit, under ## [Unreleased], as '- **one-line effect.** then the rationale'. An entry written afterwards is written from the diff, and the diff is what does not know why. Exempt: CLAUDE.md alone, or a fix to an [Unreleased] entry already written. Files: $(printf '%s' "$SUBSTANTIVE" | tr '\n' ' ')"
 	fi
 fi
 

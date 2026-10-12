@@ -28,7 +28,7 @@ const CANON = {
 
 /* A released section's raw text: its heading down to the next heading or the link list. */
 export function sectionText(text, id) {
-	const lines = text.split('\n');
+	const lines = text.replace(/\r\n/g, '\n').split('\n');
 	const a = lines.findIndex(l => l.startsWith(`## [${id}]`));
 	if (a < 0) return null;
 	let b = a + 1;
@@ -40,7 +40,7 @@ export function sectionText(text, id) {
  * its canonical slot when absent. Pure text in, text out. */
 export function insertBullet(text, canon, section, bullet) {
 	if (!canon.includes(section)) throw new Error(`unknown section \`${section}\` — one of ${canon.join('/')}`);
-	const lines = text.split('\n');
+	const lines = text.replace(/\r\n/g, '\n').split('\n');
 	const u = lines.findIndex(l => l.startsWith('## [Unreleased]'));
 	if (u < 0) throw new Error('no [Unreleased] heading');
 	let end = u + 1;
@@ -122,7 +122,7 @@ function gate() {
 	/* Parse into versions -> sections -> bullets. A bullet is a top-level `- ` at column 0; the
 	 * rationale that follows it is indented, so it never counts as one. */
 	function parse(file) {
-		const lines = readFileSync(join(ROOT, file), 'utf8').split('\n');
+		const lines = readFileSync(join(ROOT, file), 'utf8').replace(/\r\n/g, '\n').split('\n');
 		const versions = [];
 		const links = new Map();
 		let ver = null, sec = null;

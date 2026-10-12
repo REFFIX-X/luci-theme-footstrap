@@ -34,6 +34,13 @@
 		border-inline-start-color: var(--fs-accent);
 		--fs-alert-tint: var(--fs-accent-fill);
 	}
+	/* LuCI's apply modal updates this text with its remaining seconds; tabular figures stop the
+	 * countdown shifting the message, while the larger weight makes the live apply state scannable. */
+	#modal_overlay .alert-message.notice.spinning > :where(p) {
+		font-size: var(--fs-type-lg);
+		font-weight: var(--fs-weight-bold);
+		font-variant-numeric: tabular-nums;
+	}
 
 	/* spinner ::before is inline-block for its usual inline hosts, but displayStatus() builds a
 	 * BLOCK host, opening its own line. GRID, not flex: the caller decides child count. */

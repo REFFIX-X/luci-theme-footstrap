@@ -582,6 +582,17 @@
 	}
 	.fs-indicators [data-indicator][data-style="active"],
 	#indicators [data-indicator][data-style="active"] { color: var(--fs-good); }
+	/* LuCI emits this only while staged UCI changes exist; keep the clickable count visibly pending
+	 * in every layout, including the numeric badge the rail/compact bar derive from its text. */
+	.fs-indicators [data-indicator="uci-changes"][data-clickable],
+	#indicators [data-indicator="uci-changes"][data-clickable] {
+		background-color: var(--fs-panel2);
+		background-image: linear-gradient(var(--fs-warn-fill), var(--fs-warn-fill));
+		border-color: var(--fs-warn);
+		border-inline-start: 3px solid var(--fs-warn);
+		color: var(--fs-text);
+		font-weight: var(--fs-weight-bold);
+	}
 	/* nothing else gives a clickable indicator a pointer cursor — base's rule carries geometry
 	 * only, and this theme emits no <header> at all — so "Refreshing" showed a text caret. */
 	.fs-indicators [data-indicator][data-clickable],

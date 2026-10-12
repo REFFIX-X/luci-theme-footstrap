@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Changed
+
+- **Pending configuration changes are easier to spot.** LuCI staged changes now use a warning treatment in navigation, and apply countdowns use stable, emphasized figures.
+
 ## [2.0.1] — 2026-10-12
 
 
